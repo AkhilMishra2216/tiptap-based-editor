@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
@@ -23,4 +24,54 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@media print {
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  body {
+    background: white;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Hide UI elements */
+  nav,
+  button,
+  footer,
+  .sticky,
+  .shadow-md,
+  .shadow-sm,
+  .shadow-inner,
+  .bg-gray-100 {
+    display: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Ensure Editor Content prints clearly */
+  .ProseMirror {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Hide the "Page Cards" background in print, we rely on browser pagination */
+  .absolute.top-0.left-0 {
+    display: none !important;
+  }
+
+  /* Reset layout for print */
+  .flex-col,
+  .h-screen,
+  .overflow-hidden,
+  .overflow-auto {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
 }
