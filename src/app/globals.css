@@ -2,7 +2,8 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
+  --background: #F3F4F6;
+  /* Global Gray Background */
   --foreground: #171717;
 }
 
@@ -13,65 +14,107 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  /* App shell handles scroll */
+  counter-reset: page-counter;
+  /* Initialize page counter */
 }
 
+/* Tiptap Editor / ProseMirror Container */
+.ProseMirror {
+  outline: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+/* The A4 Page Node */
+.page {
+  width: 794px;
+  /* A4 Width at 96 DPI */
+  height: 1122px;
+  /* A4 Height at 96 DPI */
+  background: white;
+  /* Softer, more subtle shadow for "stacked sheets" feel */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+  margin-bottom: 32px;
+  /* Distinct vertical spacing */
+  position: relative;
+  /* For absolute footer */
+  overflow: hidden;
+  /* Strict overflow clipping */
+  counter-increment: page-counter;
+  /* Count this page */
+  display: flex;
+  flex-direction: column;
+}
+
+/* The Content Area inside the Page */
+.page-content {
+  flex: 1;
+  padding: 96px;
+  /* 1 inch margin approx */
+  outline: none;
+}
+
+/* Visual Footer (CSS generated) */
+.page::after {
+  content: "Page " counter(page-counter);
+  position: absolute;
+  bottom: 48px;
+  /* Locked position */
+  right: 96px;
+  /* Right aligned aligned with content margin */
+  text-align: right;
+  color: #D1D5DB;
+  /* Light gray (Gray-300) for "non-distracting" */
+  font-size: 12px;
+  pointer-events: none;
+  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+}
+
+/* Print Styles */
 @media print {
   @page {
     margin: 0;
-    size: auto;
+    size: A4;
   }
 
   body {
     background: white;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
   }
 
-  /* Hide UI elements */
+  .ProseMirror {
+    padding: 0;
+    display: block;
+  }
+
+  .page {
+    box-shadow: none;
+    margin: 0;
+    break-after: page;
+    height: auto;
+    /* Allow print to handle height? or enforce? */
+    /* Best to enforce height to match screen WYSIWYG */
+    min-height: 1122px;
+    overflow: visible;
+    /* Let print flow if needed, but we wanted strict */
+  }
+
+  /* Hide UI */
   nav,
   button,
   footer,
-  .sticky,
-  .shadow-md,
-  .shadow-sm,
-  .shadow-inner,
-  .bg-gray-100 {
+  .sticky {
     display: none !important;
-    box-shadow: none !important;
-  }
-
-  /* Ensure Editor Content prints clearly */
-  .ProseMirror {
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  /* Hide the "Page Cards" background in print, we rely on browser pagination */
-  .absolute.top-0.left-0 {
-    display: none !important;
-  }
-
-  /* Reset layout for print */
-  .flex-col,
-  .h-screen,
-  .overflow-hidden,
-  .overflow-auto {
-    height: auto !important;
-    overflow: visible !important;
-    display: block !important;
   }
 }
