@@ -7,7 +7,6 @@ interface ToolbarProps {
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
-  // Force re-render on editor state changes to update button active states
   const [_, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
   React.useEffect(() => {
@@ -38,7 +37,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   const Button = ({ onClick, isActive, children, title }: { onClick: () => void, isActive: boolean, children: React.ReactNode, title: string }) => (
     <button
       onMouseDown={(e) => {
-        e.preventDefault(); // Prevent losing focus from editor
+        e.preventDefault();
         onClick();
       }}
       title={title}

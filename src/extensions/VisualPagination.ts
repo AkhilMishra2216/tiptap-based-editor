@@ -3,7 +3,7 @@ import { Plugin, PluginKey } from '@tiptap/pm/state';
 
 export interface PaginationOptions {
     pageHeight: number;
-    marginTop: number; // For information only, measurements use CSS
+    marginTop: number;
     marginBottom: number;
     contentPadding: number;
 }
@@ -13,7 +13,7 @@ export const VisualPagination = Extension.create<PaginationOptions>({
 
     addOptions() {
         return {
-            pageHeight: 1122, // A4 height in px (approx)
+            pageHeight: 1122,
             marginTop: 96,
             marginBottom: 96,
             contentPadding: 96,
@@ -38,10 +38,8 @@ export const VisualPagination = Extension.create<PaginationOptions>({
                         const tr = view.state.tr;
                         let hasChanges = false;
 
-                        // Max content height allowed in a page
                         const maxContentHeight = pageHeight - (contentPadding * 2);
 
-                        // Iterate pages
                         doc.forEach((pageNode, pageOffset) => {
                             if (pageNode.type.name !== 'page') return;
 
@@ -54,9 +52,8 @@ export const VisualPagination = Extension.create<PaginationOptions>({
                             let currentPixelHeight = 0;
                             let splitPos = -1;
 
-                            // pageOffset + 1 is start of page content
                             pageNode.forEach((childNode, childOffset) => {
-                                if (splitPos !== -1) return; // Already found split
+                                if (splitPos !== -1) return;
 
                                 const childPos = pageOffset + 1 + childOffset;
                                 const childDom = view.nodeDOM(childPos) as HTMLElement;
@@ -76,7 +73,6 @@ export const VisualPagination = Extension.create<PaginationOptions>({
                             });
 
                             if (splitPos !== -1) {
-                                // Move overflowing content to next page
                                 const endOfPageContent = pageOffset + pageNode.nodeSize - 1;
                                 const slice = doc.slice(splitPos, endOfPageContent);
 
@@ -92,10 +88,9 @@ export const VisualPagination = Extension.create<PaginationOptions>({
 
                                 tr.delete(splitPos, endOfPageContent);
                                 hasChanges = true;
-                                return; // Stop processing to avoid layout thrashing
+                                return;
                             }
 
-                            // Check for Underflow (Pull back from next page)
                             if (splitPos === -1) {
                                 const nextPagePos = pageOffset + pageNode.nodeSize;
                                 if (nextPagePos < doc.content.size) {
@@ -111,31 +106,16 @@ export const VisualPagination = Extension.create<PaginationOptions>({
                                             const mb = parseFloat(style.marginBottom) || 0;
                                             const fbHeight = firstBlockDom.getBoundingClientRect().height + mt + mb;
 
-                                            // Conservative check: Only pull if it clearly fits
                                             if (currentPixelHeight + fbHeight <= maxContentHeight) {
                                                 const slice = doc.slice(firstBlockPos, firstBlockPos + firstBlock.nodeSize);
-
-                                                // Delete from next page first (to avoid pos shifting issues if we insert first? No, standard TR mapping handles it, but let's be explicit)
-                                                // Actually, best practice: Insert, then Delete. IDs are preserved.
 
                                                 const insertPos = pageOffset + pageNode.nodeSize - 1;
                                                 tr.insert(insertPos, slice.content);
 
-                                                // The firstBlockPos has shifted by slice.size because we inserted locally? 
-                                                // No, insert is at insertPos (which is < firstBlockPos).
-                                                // So firstBlockPos shifts by slice.size.
-
                                                 const adjust = slice.content.size;
                                                 tr.delete(firstBlockPos + adjust, firstBlockPos + adjust + firstBlock.nodeSize);
 
-                                                // Check if next page is now empty
-                                                // We can't easily check 'tr.doc' state in middle of transaction without 'tr.doc' which recalculates.
-                                                // But we know nextPageNode had childCount.
                                                 if (nextPageNode.childCount === 1) {
-                                                    // It was 1, we moved 1. Now 0.
-                                                    // Delete the empty page.
-                                                    // Page starts at nextPagePos + adjust (because of insert).
-                                                    // Its size is 2 (empty).
                                                     tr.delete(nextPagePos + adjust, nextPagePos + adjust + 2);
                                                 }
 
@@ -164,7 +144,6 @@ export const VisualPagination = Extension.create<PaginationOptions>({
                         }, 50);
                     }
 
-                    // Initial measure
                     requestAnimationFrame(measureAndFix);
 
                     return {

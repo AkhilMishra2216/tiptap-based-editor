@@ -3,7 +3,6 @@
 
 :root {
   --background: #F3F4F6;
-  /* Global Gray Background */
   --foreground: #171717;
 }
 
@@ -21,12 +20,9 @@ body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
-  /* App shell handles scroll */
   counter-reset: page-counter;
-  /* Initialize page counter */
 }
 
-/* Tiptap Editor / ProseMirror Container */
 .ProseMirror {
   outline: none;
   min-height: 100vh;
@@ -37,52 +33,91 @@ body {
   padding-bottom: 40px;
 }
 
-/* The A4 Page Node */
 .page {
   width: 794px;
-  /* A4 Width at 96 DPI */
   height: 1122px;
-  /* A4 Height at 96 DPI */
   background: white;
-  /* Softer, more subtle shadow for "stacked sheets" feel */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
   margin-bottom: 32px;
-  /* Distinct vertical spacing */
   position: relative;
-  /* For absolute footer */
   overflow: hidden;
-  /* Strict overflow clipping */
   counter-increment: page-counter;
-  /* Count this page */
   display: flex;
   flex-direction: column;
 }
 
-/* The Content Area inside the Page */
 .page-content {
   flex: 1;
   padding: 96px;
-  /* 1 inch margin approx */
   outline: none;
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 12pt !important;
+  line-height: 1.5 !important;
 }
 
-/* Visual Footer (CSS generated) */
+.ProseMirror h1,
+.page-content h1 {
+  font-size: 2.25em !important;
+  font-weight: 800 !important;
+  margin-top: 0.8em;
+  margin-bottom: 0.4em;
+  line-height: 1.1;
+  color: #111827;
+}
+
+.ProseMirror h2,
+.page-content h2 {
+  font-size: 1.875em !important;
+  font-weight: 700 !important;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+  color: #1f2937;
+}
+
+.ProseMirror p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
 .page::after {
   content: "Page " counter(page-counter);
   position: absolute;
   bottom: 48px;
-  /* Locked position */
   right: 96px;
-  /* Right aligned aligned with content margin */
   text-align: right;
   color: #D1D5DB;
-  /* Light gray (Gray-300) for "non-distracting" */
   font-size: 12px;
   pointer-events: none;
   font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
 }
 
-/* Print Styles */
+.tiptap ul,
+.ProseMirror ul,
+.page-content ul {
+  list-style-type: disc !important;
+  padding-left: 2em !important;
+  margin-top: 0.5em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.tiptap ol,
+.ProseMirror ol,
+.page-content ol {
+  list-style-type: decimal !important;
+  padding-left: 2em !important;
+  margin-top: 0.5em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.tiptap li,
+.ProseMirror li,
+.page-content li {
+  margin-top: 0.25em !important;
+  margin-bottom: 0.25em !important;
+  display: list-item !important;
+}
+
 @media print {
   @page {
     margin: 0;
@@ -103,14 +138,10 @@ body {
     margin: 0;
     break-after: page;
     height: auto;
-    /* Allow print to handle height? or enforce? */
-    /* Best to enforce height to match screen WYSIWYG */
     min-height: 1122px;
     overflow: visible;
-    /* Let print flow if needed, but we wanted strict */
   }
 
-  /* Hide UI */
   nav,
   button,
   footer,

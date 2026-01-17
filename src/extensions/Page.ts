@@ -5,7 +5,7 @@ export const Page = Node.create({
 
     group: 'block',
 
-    content: 'block+',
+    content: '(paragraph | heading | bulletList | orderedList | table | blockquote | codeBlock | horizontalRule)+',
 
     defining: true,
 
@@ -20,16 +20,8 @@ export const Page = Node.create({
     renderHTML({ HTMLAttributes }) {
         return [
             'div',
-            mergeAttributes(HTMLAttributes, { class: 'page' }), // Outer A4 container
-            // We can't easily put "structural" HTML like a footer *after* the content hole in simple renderHTML 
-            // if we want standard schema behavior, but we can do it.
-            // However, for Tiptap, the "content hole" is usually the last element or specified by 0.
-            // Let's keep it simple: The .page is the container. 
-            // We'll use CSS pseduo-elements or absolute positioning for the footer logic 
-            // OR we can make a NodeView if we need dynamic page numbers.
-            // For now, let's just make the container. The logic in VisualPagination can manage attributes if needed.
-            ['div', { class: 'page-content' }, 0], // The content hole
-            //   ['div', { class: 'page-footer', contenteditable: 'false' }, 'Page'] // Static Footer for now
+            mergeAttributes(HTMLAttributes, { class: 'page' }),
+            ['div', { class: 'page-content' }, 0],
         ];
     },
 
